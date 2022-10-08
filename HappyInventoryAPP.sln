@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HappyInventoryAPP.Server", "HappyInventoryAPP\Server\HappyInventoryAPP.Server.csproj", "{C03FD29F-D9F1-40FC-B145-6E8CD3BBDFF5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HappyInventoryAPP.Client", "HappyInventoryAPP\Client\HappyInventoryAPP.Client.csproj", "{A8A8416C-0498-454B-B334-87774E37CD31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HappyInventoryAPP.Shared", "HappyInventoryAPP\Shared\HappyInventoryAPP.Shared.csproj", "{125A2D16-9103-4E67-8EE1-EC359619A2F4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C03FD29F-D9F1-40FC-B145-6E8CD3BBDFF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C03FD29F-D9F1-40FC-B145-6E8CD3BBDFF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C03FD29F-D9F1-40FC-B145-6E8CD3BBDFF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C03FD29F-D9F1-40FC-B145-6E8CD3BBDFF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8A8416C-0498-454B-B334-87774E37CD31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8A8416C-0498-454B-B334-87774E37CD31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8A8416C-0498-454B-B334-87774E37CD31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8A8416C-0498-454B-B334-87774E37CD31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{125A2D16-9103-4E67-8EE1-EC359619A2F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{125A2D16-9103-4E67-8EE1-EC359619A2F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{125A2D16-9103-4E67-8EE1-EC359619A2F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{125A2D16-9103-4E67-8EE1-EC359619A2F4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7D04B394-18BC-4A91-9794-DCC48962968E}
+	EndGlobalSection
+EndGlobal

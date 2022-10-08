@@ -1,0 +1,62 @@
+@page "/item/viewitem/{id}"
+@inject IItemService ItemService
+@inject NavigationManager navManager
+@inject HappyInventoryAPP.Client.Shared.PageHistoryState PageHistoryState
+
+<h1>View Item</h1>
+<br/>
+
+<table class="table col-md-6">
+    <tbody>
+        <tr>
+            <th scope="row">Id</th>
+           
+            <td>@item.Id</td>
+        </tr>
+        <tr>
+            <th scope="row">Item Name</th>
+            <td>@item.ItemName</td>
+        </tr>
+        <tr>
+            <th scope="row">MSRP Price</th>
+            <td>@item.MSRPPrice</td>
+        </tr>
+        <tr>
+            <th scope="row">Item Quantity</th>
+            <td>@item.Qty</td>
+        </tr>
+           <tr>
+            <th scope="row">SKU Code</th>
+            <td>@item.SKUCode</td>
+        </tr>
+           <tr>
+            <th scope="row">WarehouseId</th>
+            <td>@item.WarehouseId</td>
+        </tr>
+           <tr>
+            <th scope="row">Warehouse Name</th>
+            <td>@item.warehouse.WarehouseName</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="form-group">
+    @if (PageHistoryState.CanGoBack()){
+        <NavLink href="@PageHistoryState.GetGoBackPage()" class="btn btn-link">Back</NavLink>
+    }
+    else{
+        <NavLink href="/item/1" class="btn btn-link">Back</NavLink>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    Item item = new Item();
+    
+    protected async override Task OnParametersSetAsync()
+    {
+       item = await ItemService.GetItem(int.Parse(Id));
+    }
+}

@@ -1,0 +1,41 @@
+@page "/item/createItem"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@inject IAlertService AlertService
+@inject IItemService ItemService
+@inject NavigationManager navManager
+@inject HappyInventoryAPP.Client.Shared.PageHistoryState PageHistoryState
+
+<h1>Create New Item</h1>
+<br/>
+
+<Form ButtonText="Create Item" item="@item" loading="@loading"
+            OnValidSubmit="@CreateItem" />
+
+@code {
+    bool loading = false;
+    Item item = new Item();
+ 
+
+    async Task CreateItem()
+    {
+        loading = true;
+        try
+        {
+            await ItemService.AddItem(item);
+            AlertService.Success("Item added successfully", keepAfterRouteChange: true);
+            if (PageHistoryState.CanGoBack()){
+                navManager.NavigateTo(PageHistoryState.GetGoBackPage());
+            }
+            else{
+                navManager.NavigateTo("/item/1");
+            } 
+        }
+        catch (Exception ex)
+        {
+            AlertService.Error(ex.Message);
+            loading = false;
+            StateHasChanged();
+        }
+    }
+}

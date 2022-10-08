@@ -1,0 +1,55 @@
+@page "/Warehouse/viewWarehouse/{id}"
+@inject IWarehouseService WarehouseService
+@inject NavigationManager navManager
+@inject HappyInventoryAPP.Client.Shared.PageHistoryState PageHistoryState
+
+<h1>View Warehouse</h1>
+<br/>
+
+<table class="table col-md-6">
+    <tbody>
+        <tr>
+            <th scope="row">Id</th>
+           
+            <td>@warehouse.Id</td>
+        </tr>
+        <tr>
+            <th scope="row">Warehouse Name</th>
+         <td>@warehouse.WarehouseName</td>
+        </tr>
+        <tr>
+            <th scope="row">Country</th>
+             <td>@warehouse.Country</td>
+        </tr>
+        <tr>
+            <th scope="row">City</th>
+               <td>@warehouse.City</td>
+        </tr>
+        
+           <tr>
+            <th scope="row">Address</th>
+              <td>@warehouse.Address</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="form-group">
+    @if (PageHistoryState.CanGoBack()){
+        <NavLink href="@PageHistoryState.GetGoBackPage()" class="btn btn-link">Back</NavLink>
+    }
+    else{
+        <NavLink href="/warehouse/1" class="btn btn-link">Back</NavLink>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    Warehouse warehouse = new Warehouse();
+
+    protected async override Task OnParametersSetAsync()
+    {
+       warehouse = await WarehouseService.GetWarehouse(int.Parse(Id));
+    }
+}

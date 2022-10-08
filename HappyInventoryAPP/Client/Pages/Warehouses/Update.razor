@@ -1,0 +1,49 @@
+@page "/warehouse/updateWarehouse/{id}"
+@attribute [Authorize]
+@inject IAlertService AlertService
+@inject IWarehouseService WarehouseService 
+@inject NavigationManager navManager
+@inject HappyInventoryAPP.Client.Shared.PageHistoryState PageHistoryState
+
+<h1>Edit Item</h1>
+<br/>
+
+<Form ButtonText="Update Warehouse" warehouse="@warehouse" loading="@loading"
+            OnValidSubmit="@UpdateWarehouse" />
+
+@code {
+    bool loading = false;
+
+    [Parameter]
+    public string Id { get; set; }
+    Warehouse warehouse = new Warehouse();
+ 
+ 
+    
+    protected async override Task OnParametersSetAsync()
+    {
+      warehouse= await WarehouseService.GetWarehouse(int.Parse(Id));
+    }
+
+    async Task UpdateWarehouse()
+    {
+        loading = true;
+        try
+        {
+            await WarehouseService.UpdateWarehouse(warehouse);
+            AlertService.Success("Warehouse  updated successfully", keepAfterRouteChange: true);
+            if (PageHistoryState.CanGoBack()){
+                navManager.NavigateTo(PageHistoryState.GetGoBackPage());
+            }
+            else{
+                navManager.NavigateTo("/warehouse/1");
+            } 
+        }
+        catch (Exception ex)
+        {
+            AlertService.Error(ex.Message);
+            loading = false;
+            StateHasChanged();
+        }
+    }
+}

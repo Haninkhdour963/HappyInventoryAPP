@@ -1,0 +1,41 @@
+@page "/warehouse/createWarehouse"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@inject IAlertService AlertService
+@inject IWarehouseService WarehouseService
+@inject NavigationManager navManager
+@inject HappyInventoryAPP.Client.Shared.PageHistoryState PageHistoryState
+
+<h1>Create New Item</h1>
+<br/>
+
+<Form ButtonText="Create Warehouse" warehouse="@warehouse" loading="@loading"
+            OnValidSubmit="@CreateWarehouse" />
+
+@code {
+    bool loading = false;
+    Warehouse warehouse = new Warehouse();
+
+
+    async Task CreateWarehouse()
+    {
+        loading = true;
+        try
+        {
+            await WarehouseService.AddWarehouse(warehouse);
+            AlertService.Success("Warehouse  added successfully", keepAfterRouteChange: true);
+            if (PageHistoryState.CanGoBack()){
+                navManager.NavigateTo(PageHistoryState.GetGoBackPage());
+            }
+            else{
+                navManager.NavigateTo("/warehouse/1");
+            } 
+        }
+        catch (Exception ex)
+        {
+            AlertService.Error(ex.Message);
+            loading = false;
+            StateHasChanged();
+        }
+    }
+}

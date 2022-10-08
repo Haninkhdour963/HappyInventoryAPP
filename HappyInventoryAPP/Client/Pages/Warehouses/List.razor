@@ -1,0 +1,136 @@
+@page "/Warehouse/{Page}"
+@inject Services.IUserService UserService
+@inject IWarehouseService WarehouseService
+@inject Microsoft.AspNetCore.Components.NavigationManager UriHelper
+@inject HappyInventoryAPP.Client.Shared.PageHistoryState PageHistoryState
+
+<h1>All Items</h1>
+<br/>
+
+<div class="row mb-3">
+    
+    <div class="col-md-7">
+        @if(LoggedIn)
+        {       
+            <NavLink href="/Warehouse/createWarehouse" class="btn btn-sm btn-success mb-2">Add Warehouse</NavLink>
+        }
+    </div>
+    <div class="input-group col-md-5 text-md-right">
+        <input name="WarehouseSearchInput" type="text" class="form-control" placeholder="Warehouse Name" @bind="this.SearchTerm" @onkeyup="SearchBoxKeyPress" />
+        <div class="input-group-btn">
+            <button name="WarehouseSearchButton" class="btn btn-default" @onclick="SearchClick">
+                <i class="oi oi-magnifying-glass" title="search" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="input-group-btn">
+            <button name="WarehouseSearchClear" class="btn btn-default" @onclick="ClearSearch">
+                <i class="oi oi-x" title="clear" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+@if (warehouses == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+             
+                <th style="width:30%">Warehouse Id</th>
+                <th style="width:30%">Warehouse Name</th>
+                <th style="width:30%">Country</th>
+                <th style="width:30%">City</th>
+                <th style="width:30%">Address</th>
+                <th style="width:5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var  warehouse in  warehouses.Results)
+            {
+                <tr>
+             <td>@warehouse.Id</td>
+             <td>@warehouse.WarehouseName</td>
+             <td>@warehouse.Country</td>
+             <td>@warehouse.City</td>
+             <td>@warehouse.Address</td>
+            
+                  
+                    <td style="white-space: nowrap">
+                     
+                    </td>
+                </tr> 
+            }
+        </tbody>
+    </table>
+    <Pager Result=@warehouses PageChanged=PagerPageChanged />
+}
+
+@code {
+    [Parameter]
+    public string Page { get; set;} = "1";
+    [Parameter]
+    public string SearchTerm { get; set; } = string.Empty;
+    protected PagedResult<Warehouse> warehouses;
+
+    public bool LoggedIn
+    {
+        get {return UserService.User != null;}
+    }
+    
+    protected override void OnInitialized()
+    {
+        PageHistoryState.AddPageToHistory(UriHelper.Uri);
+        base.OnInitialized();
+    }
+    
+    protected override async Task OnParametersSetAsync()
+    {
+       warehouses = await WarehouseService.GetAll(null, Page);
+        PageHistoryState.AddPageToHistory(UriHelper.Uri);
+    }
+
+    protected async Task SearchBoxKeyPress(KeyboardEventArgs ev)
+    {
+        if (ev.Key == "Enter")
+        {
+            await SearchClick();
+        }
+    }
+
+    protected async Task SearchClick()
+    {
+        if (string.IsNullOrEmpty(SearchTerm))
+        {
+            warehouses = await WarehouseService.GetAll(null, Page);
+            return;
+        }
+       warehouses = await WarehouseService.GetAll(SearchTerm, Page);
+        StateHasChanged();
+    }
+
+    protected async Task ClearSearch()
+    {
+        SearchTerm = string.Empty;
+      warehouses = await WarehouseService.GetAll(SearchTerm, Page);
+        PageHistoryState.AddPageToHistory(UriHelper.Uri);
+        StateHasChanged();
+    }
+
+    protected void PagerPageChanged(int page)
+    {
+        UriHelper.NavigateTo("/warehouse/" + page);
+        PageHistoryState.AddPageToHistory(UriHelper.Uri);
+    }
+
+    private async void Deletewarehouse(Warehouse _warehouse)
+    {
+        var warehouse = _warehouse;
+        await WarehouseService.DeleteWarehouse(warehouse.Id);
+        warehouses = await WarehouseService.GetAll(null, Page);
+        StateHasChanged();
+    }
+}

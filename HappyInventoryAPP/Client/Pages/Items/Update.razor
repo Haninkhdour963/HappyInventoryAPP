@@ -1,0 +1,48 @@
+@page "/item/updateItem/{id}"
+@attribute [Authorize]
+@inject IAlertService AlertService
+@inject IItemService ItemService 
+@inject NavigationManager navManager
+@inject HappyInventoryAPP.Client.Shared.PageHistoryState PageHistoryState
+
+<h1>Edit Item</h1>
+<br/>
+
+<Form ButtonText="Update Item" user="@item" loading="@loading"
+            OnValidSubmit="@UpdateItem" />
+
+@code {
+    bool loading = false;
+
+    [Parameter]
+    public string Id { get; set; }
+    Item item = new Item();
+ 
+    
+    protected async override Task OnParametersSetAsync()
+    {
+       item = await ItemService.GetItem(int.Parse(Id));
+    }
+
+    async Task UpdateItem()
+    {
+        loading = true;
+        try
+        {
+            await ItemService.UpdateItem(item);
+            AlertService.Success("Item updated successfully", keepAfterRouteChange: true);
+            if (PageHistoryState.CanGoBack()){
+                navManager.NavigateTo(PageHistoryState.GetGoBackPage());
+            }
+            else{
+                navManager.NavigateTo("/item/1");
+            } 
+        }
+        catch (Exception ex)
+        {
+            AlertService.Error(ex.Message);
+            loading = false;
+            StateHasChanged();
+        }
+    }
+}

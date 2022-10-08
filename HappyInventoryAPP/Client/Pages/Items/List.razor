@@ -1,0 +1,138 @@
+@page "/item/{Page}"
+@inject Services.IUserService UserService
+@inject IItemService ItemService
+@inject Microsoft.AspNetCore.Components.NavigationManager UriHelper
+@inject HappyInventoryAPP.Client.Shared.PageHistoryState PageHistoryState
+
+<h1>All Items</h1>
+<br/>
+
+<div class="row mb-3">
+    
+    <div class="col-md-7">
+        @if(LoggedIn)
+        {       
+            <NavLink href="/item/createItem" class="btn btn-sm btn-success mb-2">Add Item</NavLink>
+        }
+    </div>
+    <div class="input-group col-md-5 text-md-right">
+        <input name="ItemSearchInput" type="text" class="form-control" placeholder="Item Name" @bind="this.SearchTerm" @onkeyup="SearchBoxKeyPress" />
+        <div class="input-group-btn">
+            <button name="ItemSearchButton" class="btn btn-default" @onclick="SearchClick">
+                <i class="oi oi-magnifying-glass" title="search" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="input-group-btn">
+            <button name="ItemSearchClear" class="btn btn-default" @onclick="ClearSearch">
+                <i class="oi oi-x" title="clear" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+@if (items == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width:35%">Id</th>
+                <th style="width:30%">Item Name</th>
+                <th style="width:30%">MSRP Price</th>
+                <th style="width:30%">Item Quantity</th>
+                <th style="width:30%">SKU Code</th>
+                <th style="width:30%">Warehouse Id</th>
+                <th style="width:30%">Warehouse Name</th>
+                <th style="width:5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in items.Results)
+            {
+                <tr>
+                  <td>@item.Id</td>
+                  <td>@item.ItemName</td>
+                  <td>@item.MSRPPrice</td>
+                  <td>@item.Qty</td>
+                  <td>@item.SKUCode</td>
+                  <td>@item.WarehouseId</td>
+                  <td>@item.warehouse.WarehouseName</td>
+                  
+                    <td style="white-space: nowrap">
+                     
+                    </td>
+                </tr> 
+            }
+        </tbody>
+    </table>
+    <Pager Result=@items PageChanged=PagerPageChanged />
+}
+
+@code {
+    [Parameter]
+    public string Page { get; set;} = "1";
+    [Parameter]
+    public string SearchTerm { get; set; } = string.Empty;
+    protected PagedResult<Item> items;
+
+    public bool LoggedIn
+    {
+        get {return UserService.User != null;}
+    }
+    
+    protected override void OnInitialized()
+    {
+        PageHistoryState.AddPageToHistory(UriHelper.Uri);
+        base.OnInitialized();
+    }
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        items = await ItemService.GetItem(null, Page);
+        PageHistoryState.AddPageToHistory(UriHelper.Uri);
+    }
+
+    protected async Task SearchBoxKeyPress(KeyboardEventArgs ev)
+    {
+        if (ev.Key == "Enter")
+        {
+            await SearchClick();
+        }
+    }
+
+    protected async Task SearchClick()
+    {
+        if (string.IsNullOrEmpty(SearchTerm))
+        {
+            items = await ItemService.GetItem(null, Page);
+            return;
+        }
+        items = await ItemService.GetItem(SearchTerm, Page);
+        StateHasChanged();
+    }
+
+    protected async Task ClearSearch()
+    {
+        SearchTerm = string.Empty;
+        items = await ItemService.GetItem(SearchTerm, Page);
+        PageHistoryState.AddPageToHistory(UriHelper.Uri);
+        StateHasChanged();
+    }
+
+    protected void PagerPageChanged(int page)
+    {
+        UriHelper.NavigateTo("/item/" + page);
+        PageHistoryState.AddPageToHistory(UriHelper.Uri);
+    }
+
+    private async void DeleteItem(Item _item)
+    {
+        var item = _item;
+        await ItemService.DeleteItem(item.Id);
+        items = await ItemService.GetItem(null, Page);
+        StateHasChanged();
+    }
+}
